@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Объект, реализующий основную функцию плагина -->
+	<bean id="agiksGetLegendOperation" class="ru.agiks.geoserver.legend.GetLegendOperation" />
+
+	<!-- Объект, отвечающий за разбор параметров http-запроса -->
+	<bean id="agiksGetLegendRequestKvpReader" class="ru.agiks.geoserver.legend.GetLegendRequestKvpReader">
+		<constructor-arg ref="geoServer" />
+	</bean>
+	
+	<!-- Объект отвечающий за сериализацию результата в http-ответ -->
+	<bean id="agiksGetLegendResponseWriter" class="ru.agiks.geoserver.legend.GetLegendResponseWriter" />
+	
+	<!-- Объект, реализующий OWS-сервис -->
+	<bean id="agiksLegendService" class="ru.agiks.geoserver.legend.LegendService">
+		<property name="getLegendOperation" ref="agiksGetLegendOperation" />
+	</bean>
+	
+	<!-- Дескриптор OWS-сервиса -->
+	<bean id="agiksLegend_1_0_0_ServiceDescriptor" class="org.geoserver.platform.Service">
+		<!-- Имя сервиса в URL-параметре 'service' -->
+		<constructor-arg index="0" value="AGIKS_LEGEND"/>
+
+		<!-- Ссылка на OWS-сервис -->
+		<constructor-arg index="1" ref="agiksLegendService"/>
+
+		<!-- Версия сервиса в URL-параметре 'version' -->
+		<constructor-arg index="2" value="1.0.0"/>
+
+		<!-- Методы OWS-сервиса, передаваемые в URL-параметре 'request' -->
+		<constructor-arg index="3">
+			<list>
+				<value>getLegend</value>
+			</list>
+		</constructor-arg>
+	</bean>	
+</beans>
